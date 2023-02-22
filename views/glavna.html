@@ -1,0 +1,22 @@
+
+% rebase('osnova.html') 
+
+
+<h1>
+    Izibira mesta za potovanje po mestih 
+</h1>
+
+<h2>
+    Vse evropske drzave so
+</h2>
+
+<ul>
+    % for drzava in evropske_drzave:
+<li>
+    <div class = "columns">
+        <div class = "column">{{ drzava[0] }} </div>
+        <div class = "column" >{{ drzava[1] }} </div>
+    </div>
+ </li> 
+    %end
+</ul>

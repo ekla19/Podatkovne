@@ -4,6 +4,57 @@ import sqlite3
 
 db = sqlite3.connect("baza_potovanj.db")
 
+def ustvari_tabele(conn):
+    with conn:
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                drzave(
+                ime TEXT,
+                kratica TEXT NOT NULL PRIMARY KEY
+                )
+                """)
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                glavna_mesta(
+                id INTEGER NOT NULL PRIMARY KEY UNIQUE,
+                mesto TEXT,
+                letni_cas TEXT,
+                stevilo_dni INTEGER,
+                cenovni_rang INTEGER,
+                opis TEXT)
+                """)
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                cenovni_rang(
+                cena TEXT,
+                rang INTEGER
+                )
+                """)
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                gl_mesta_in_drzave (
+                id_mesta INTEGER NOT NULL PRIMARY KEY,
+                kratica_drzave TEXT
+                )
+                """)
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                namen (
+                id_mesta INTEGER,
+                namen TEXT
+                )
+                """)
+        conn.execute("""
+                CREATE TABLE IF NOT EXISTS
+                glavne_atrakcije (
+                id_mesta INTEGER,
+                glavna_atrakcija TEXT
+                )
+                """)
+
+
+
+
 def naredi_tabele(datoteka):
     '''funkcija naredi tabelo iz podatkov v datoteki'''
     tab = []
@@ -24,14 +75,7 @@ with open('evropske_drzave.csv','r',encoding='utf-8') as file:
     for vrstica in csvreader:
         evropske_drzave.append((vrstica[0],vrstica[1]))
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                drzave(
-                ime TEXT UNIQUE,
-                kratica TEXT NOT NULL PRIMARY KEY UNIQUE
-                )
-                """)
+
 
 def napolni_drzave():
 
@@ -50,18 +94,6 @@ with open("glavna_mesta.csv", "r",encoding='utf-8') as file:
                 glavna_mesta.append((vrstica[0],vrstica[3],vrstica[4],vrstica[5],vrstica[6], vrstica[7]))
 
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                glavna_mesta(
-                id INTEGER NOT NULL PRIMARY KEY UNIQUE,
-                mesto TEXT,
-                letni_cas TEXT,
-                stevilo_dni INTEGER,
-                cenovni_rang INTEGER,
-                opis TEXT)
-                """)
-    
 
 def napolni_gl_mesta():
    with db as cursor:
@@ -83,14 +115,6 @@ with open('cenovni_rang.csv','r',encoding='utf-8') as file:
 
 db = sqlite3.connect("baza_potovanj.db")
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                cenovni_rang(
-                cena TEXT,
-                rang INTEGER
-                )
-                """)
 
 def napolni_rang():
     with db as cursor:
@@ -110,14 +134,7 @@ with open('gl_mesta_in_drzave.csv','r',encoding='utf-8') as file:
 
 db = sqlite3.connect("baza_potovanj.db")
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                gl_mesta_in_drzave (
-                id_mesta INTEGER NOT NULL PRIMARY KEY,
-                kratica_drzave TEXT
-                )
-                """)
+
 
 def napolni_gl_mesta_in_drzave():
     with db as cursor:
@@ -136,14 +153,6 @@ with open('namen.csv','r',encoding='utf-8') as file:
     for vrstica in csvreader:
         nameni.append((vrstica[0],vrstica[1]))
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                namen (
-                id_mesta INTEGER UNIQUE,
-                namen TEXT
-                )
-                """)
 
 def napolni_namen():
     with db as cursor:
@@ -162,14 +171,6 @@ with open('glavne_atrakcije.csv','r',encoding='utf-8') as file:
         glavne_atrakcije.append((vrstica[0],vrstica[1]))
 
 
-with db as cursor:
-    cursor.execute("""
-                CREATE TABLE IF NOT EXISTS
-                glavne_atrakcije (
-                id_mesta INTEGER,
-                glavna_atrakcija TEXT
-                )
-                """)
 
 def napolni_glavne_atrakcije():
     with db as cursor:
@@ -178,9 +179,13 @@ def napolni_glavne_atrakcije():
             INSERT INTO glavne_atrakcije (id_mesta, glavna_atrakcija)
                 VALUES(:_idmesta, :gl_atrakcija)""",{"_idmesta":id_mesta, "gl_atrakcija":glavna_atrakcija})
 
-napolni_drzave()
-napolni_gl_mesta()
-napolni_rang()
-napolni_gl_mesta_in_drzave()
-napolni_namen()
-napolni_glavne_atrakcije()
+def napolni_bazo(): 
+    napolni_drzave()
+    napolni_gl_mesta()
+    napolni_rang()
+    napolni_gl_mesta_in_drzave()
+    napolni_namen()
+
+    napolni_glavne_atrakcije()
+
+napolni_bazo()
